@@ -58,7 +58,6 @@ POST /withdraw
 
 ### Request Examples
 
-```
 
 **Fund Account:**
 ```json
