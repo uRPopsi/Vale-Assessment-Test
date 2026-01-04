@@ -1,63 +1,288 @@
-<<<<<<< HEAD
-# Vale-Assessment-Test
-=======
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SpringCo Fintech Solution
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A **Laravel 10 + Livewire fintech application** for managing customer accounts, transactions, and interest calculations.
+This project exposes **secure REST API endpoints (Laravel Sanctum)** that can be tested via **Postman**, alongside a functional web UI built with Jetstream.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+* **Automatic FLEX Account**
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+  * A FLEX account is automatically created upon user registration
 
-## Learning Laravel
+* **Multiple Account Support**
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+  * Each customer can have up to **5 accounts**
+  * Supported types: FLEX, DELUXE, VIVA, PIGGY, SUPA
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+* **Fund & Withdraw Operations**
 
-## Laravel Sponsors
+  * Secure balance updates
+  * Insufficient balance protection
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+* **Automatic Interest Calculation**
 
-### Premium Partners
+  * Interest applies only when balance ≥ ₦20,000
+  * Rate depends on account type
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+* **Dashboard Filtering**
 
-## Contributing
+  * Filter by account type
+  * View all user accounts and balances
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## Account Types & Interest Rates
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+| Account Type | Interest Rate | Minimum Balance |
+| ------------ | ------------- | --------------- |
+| FLEX         | 2.5%          | ₦20,000         |
+| DELUXE       | 3.5%          | ₦20,000         |
+| VIVA         | 6.0%          | ₦20,000         |
+| PIGGY        | 9.2%          | ₦20,000         |
+| SUPA         | 10.0%         | ₦20,000         |
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Routes & Pages (Web UI)
 
-## License
+These routes are used by the **Livewire + Jetstream UI** and require browser-based authentication:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
->>>>>>> 3fd1887 (Initial Laravel project commit with account and user setup)
+* `/` – User registration page
+* `/login` – User authentication
+* `/dashboard` – Account overview and filters
+* `/create-account` – Create a new account
+* `/fund` – Fund an existing account
+* `/withdraw` – Withdraw from an account
+* `/interest` – View interest details
+
+> These routes are **not intended for Postman testing** due to CSRF protection.
+
+---
+
+## API Endpoints (Postman Ready)
+
+All API endpoints are prefixed with:
+
+```
+http://127.0.0.1:8000/api
+```
+
+---
+
+### Authentication
+
+#### Register
+
+```
+POST /api/register
+```
+
+**Body (JSON):**
+
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "password",
+  "password_confirmation": "password"
+}
+```
+
+Returns an **authentication token**.
+
+---
+
+#### Login
+
+```
+POST /api/login
+```
+
+**Body (JSON):**
+
+```json
+{
+  "email": "john@example.com",
+  "password": "password"
+}
+```
+
+Returns an **authentication token**.
+
+---
+
+### Authentication Requirement (Important)
+
+All protected endpoints require authentication.
+
+In Postman:
+
+1. Open the **Authorization** tab
+2. Set **Auth Type** to `Bearer Token`
+3. Paste the token returned from `/login` or `/register`
+
+---
+
+### Account Operations
+
+#### Get All User Accounts
+
+```
+GET /api/accounts
+```
+
+Returns all accounts belonging to the authenticated user.
+
+---
+
+#### Create a New Account
+
+```
+POST /api/accounts
+```
+
+**Body (JSON):**
+
+```json
+{
+  "account_type_id": 2
+}
+```
+
+* Users cannot have more than **5 accounts**
+* `account_type_id` must exist in the `account_types` table
+
+---
+
+### Fund & Withdraw Operations
+
+> **Important:**
+> The number in the URL represents the **ACCOUNT ID**, not the user ID. The account's ID can be found inside of the database in the accounts table named "id".
+
+Example:
+
+```
+/api/accounts/12/fund
+```
+
+Funds the account with ID **12**.
+
+---
+
+#### Fund Account
+
+```
+POST /api/accounts/{account_id}/fund
+```
+
+**Body (JSON):**
+
+```json
+{
+  "amount": 5000
+}
+```
+
+Updates the account balance and records the transaction.
+
+---
+
+#### Withdraw From Account
+
+```
+POST /api/accounts/{account_id}/withdraw
+```
+
+**Body (JSON):**
+
+```json
+{
+  "amount": 2000
+}
+```
+
+Returns an error if the balance is insufficient.
+
+---
+
+### Interest Calculation
+
+#### View Interest
+
+```
+GET /api/accounts/{account_id}/interest
+```
+
+Returns calculated interest based on account type and balance.
+
+---
+
+### Logout
+
+```
+POST /api/logout
+```
+
+Logs out the authenticated user and invalidates the token.
+
+---
+
+## Installation & Setup
+
+```bash
+# Clone repository
+git clone https://github.com/uRPopsi/Vale-Assessment-Test.git
+cd Vale-Assessment-Test
+
+# Install XAMPP
+Install XAMPP and turn on Apache and MySQL
+
+# Install dependencies
+composer install
+npm install
+
+# Configure environment
+cp .env.example .env
+php artisan key:generate
+
+# Update .env with database credentials
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=springco_fintech
+DB_USERNAME=root
+DB_PASSWORD=
+
+# Run migrations and seeders
+php artisan migrate --seed
+
+# Start development servers
+php artisan serve
+npm run dev
+```
+
+Visit: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+---
+
+## Tech Stack
+
+* **Backend:** Laravel 10, Sanctum, Jetstream
+* **Frontend:** Livewire, Tailwind CSS
+* **Database:** MySQL
+* **Authentication:** Laravel Sanctum
+* **Tooling:** Composer, NPM
+
+---
+
+## Notes
+
+* Each customer can have a **maximum of 5 accounts**
+* **FLEX accounts** are automatically created during registration
+* **API endpoints** are fully testable via Postman
+* Web UI and API authentication are intentionally separated
+* For fund and withdraw endpoints, the `{id}` in the URL represents the **account ID**
+
+---
