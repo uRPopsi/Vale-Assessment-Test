@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
 
 class Account extends Model
 {
@@ -35,4 +38,47 @@ class Account extends Model
     {
         return $this->hasMany(InterestHistory::class);
     }
+
+    public function credit(float $amount): void
+{
+    DB::transaction(function () use ($amount) {
+        $before = $this->balance;
+        $after  = $before + $amount;
+
+        $this->update(['balance' => $after]);
+
+        $this->transactions()->create([
+            'transaction_type' => 'CREDIT',
+            'amount'           => $amount,
+            'balance_before'   => $before,
+            'balance_after'    => $after,
+            'reference'        => 'CR-' . strtoupper(Str::random(10)),
+        ]);
+    });
+}
+
+public function debit(float $amount): bool
+{
+    if ($this->balance < $amount) {
+        return false;
+    }
+
+    DB::transaction(function () use ($amount) {
+        $before = $this->balance;
+        $after  = $before - $amount;
+
+        $this->update(['balance' => $after]);
+
+        $this->transactions()->create([
+            'transaction_type' => 'DEBIT',
+            'amount'           => $amount,
+            'balance_before'   => $before,
+            'balance_after'    => $after,
+            'reference'        => 'DR-' . strtoupper(Str::random(10)),
+        ]);
+    });
+
+    return true;
+}
+
 }
